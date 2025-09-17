@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using minimal_api.Dominio.Dtos;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +38,7 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast");
 
 
-app.MapPost("/login", (LoginDTO loginDTO) =>
+app.MapPost("/login", (MinimalApi.DTOs.LoginDTO loginDTO) =>
 {
     if (loginDTO.Email == "adm@teste.com" && loginDTO.Senha == "123456")
     {
