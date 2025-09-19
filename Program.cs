@@ -1,16 +1,23 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using minimal_api.Infraestrutura.Db;
 using minimal_api.Dominio.Dtos;
 
 
 var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+builder.Services.AddDbContext<DbContexto>(
+    options =>
+    {
+        options.UseMySql(
+        builder.Configuration.GetConnectionString("mysql"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("mysql"))
+        );
+    });
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -38,7 +45,7 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast");
 
 
-app.MapPost("/login", (minimal_api.Dominio.Dtos.LoginDTO loginDTO) =>
+app.MapPost("/login", (LoginDTO loginDTO) =>
 {
     if (loginDTO.Email == "adm@teste.com" && loginDTO.Senha == "123456")
     {
@@ -54,7 +61,6 @@ app.MapPost("/login", (minimal_api.Dominio.Dtos.LoginDTO loginDTO) =>
 });
 
 app.Run();
-
 
 
 
