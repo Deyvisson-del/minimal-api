@@ -12,55 +12,18 @@ namespace minimalapi.Migrations
 {
     [DbContext(typeof(DbContexto))]
     [Migration("20250919203718_SeedAdminstrador")]
-    partial class SeedAdminstrador
+    partial class SeedAdminstrador : Migration // <-- Corrigido aqui
     {
         /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void Up(MigrationBuilder migrationBuilder)
         {
-#pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+            // Implemente a lógica de migração aqui, se necessário
+        }
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("minimal_api.Dominio.Entidades.Administrador", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Perfil")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("varchar(10)");
-
-                    b.Property<string>("Senha")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Administradores");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "administrador@teste.com",
-                            Perfil = "Adm",
-                            Senha = "123456"
-                        });
-                });
-#pragma warning restore 612, 618
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            // Implemente a lógica de reversão aqui, se necessário
         }
     }
 }
