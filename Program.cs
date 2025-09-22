@@ -2,9 +2,16 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using minimal_api.Infraestrutura.Db;
 using minimal_api.Dominio.Dtos;
-
+using minimal_api.Dominio.Interfaces;
+using minimal_api.Dominio.Servicos;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
+
+
 var app = builder.Build();
 builder.Services.AddDbContext<DbContexto>(
     options =>
@@ -45,16 +52,16 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast");
 
 
-app.MapPost("/login", (LoginDTO loginDTO) =>
+app.MapPost("/login", ([FromBody]LoginDTO loginDTO, IAdministradorServico administradorServico) =>
 {
-    if (loginDTO.Email == "adm@teste.com" && loginDTO.Senha == "123456")
+    if (administradorServico.Login(loginDTO) != null)
     {
         return Results.Json("Login com Sucesso");
     }
-    else if (loginDTO.Email == "" && loginDTO.Senha == "")
-    {
-        return Results.BadRequest(new { erro = "Email e senha vázios" });
-    }
+    //else if (loginDTO.Email == "" && loginDTO.Senha == "")
+    //{
+    //    return Results.BadRequest(new { erro = "Email e senha vázios" });
+    //}
     else { 
         return Results.Unauthorized();
     }

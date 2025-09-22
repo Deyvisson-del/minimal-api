@@ -13,18 +13,19 @@ namespace minimalapi.Migrations
             migrationBuilder.InsertData(
                     table: "Administradores",
                     columns: new[] { "Id", "Email", "Perfil", "Senha" },
-                    values: new object[] { 1, "adiminstrador@teste.com", "Adm", "123456" });
+                    values: new object[] { 1, "administrador@teste.com", "Adm", "123456" }
+                    );
 
         }
         
-
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DeleteData(
                 table: "Administradores",
                 keyColumn: "Id",
-                keyValue: 1);
+                keyValue: 1
+                );
         }
     }
 }
