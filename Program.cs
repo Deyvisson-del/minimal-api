@@ -12,7 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
 
 
-builder.Services.AddOpenApi();
+//builder.Services.AddOpenApi(); dotnet 9
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<DbContexto>( options =>
     {
@@ -27,7 +30,9 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    //app.MapOpenApi(); dotnet 9
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
@@ -62,6 +67,9 @@ app.MapPost("/login", ([FromBody]LoginDTO loginDTO, IAdministradorServico admini
         return Results.Unauthorized();
     }
 });
+
+
+//app.MapGet("");
 
 
 app.Run();

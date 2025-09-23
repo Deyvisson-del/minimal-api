@@ -18,6 +18,7 @@ namespace minimal_api.Dominio.Entidades
         [StringLength(20)]
         public string Senha { get; set; } = string.Empty;
 
+        [Required]
         [StringLength(10)]
         public string Perfil { get; set; } = string.Empty;
     }
