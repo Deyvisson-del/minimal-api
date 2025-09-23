@@ -3,7 +3,6 @@ using minimal_api.Dominio.Dtos;
 
 namespace minimal_api.Dominio.Interfaces
 {
-
     public interface IVeiculoServico
     {
 
@@ -16,7 +15,6 @@ namespace minimal_api.Dominio.Interfaces
         void AtualizarVeiculo(Veiculo veiculo);
 
         void DeletarVeiculo(Veiculo veiculo);
-
 
     }
 }

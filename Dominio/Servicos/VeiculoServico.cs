@@ -4,7 +4,6 @@ using minimal_api.Infraestrutura.Db;
 using minimal_api.Dominio.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace minimal_api.Dominio.Servicos
 {
 

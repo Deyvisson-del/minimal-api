@@ -5,7 +5,6 @@ using minimal_api.Infraestrutura.Db;
 
 namespace minimal_api.Dominio.Servicos
 {
-
     public class AdministradorServico : IAdministradorServico
     {
         private readonly DbContexto _contexto;
@@ -21,5 +20,4 @@ namespace minimal_api.Dominio.Servicos
             return adm;
         }
     }
-
 }

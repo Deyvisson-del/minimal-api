@@ -28,7 +28,6 @@ public class DbContexto : DbContext
             }
             );
 
-       //modelBuilder.Entity<Veiculo>().HasData();
     }
 
 
