@@ -1,7 +1,6 @@
 using minimal_api.Dominio.Dtos; 
 using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.Interfaces;
-
 using minimal_api.Infraestrutura.Db;
 
 namespace minimal_api.Dominio.Servicos

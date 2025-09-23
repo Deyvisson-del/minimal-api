@@ -27,6 +27,8 @@ public class DbContexto : DbContext
                 Perfil = "Adm"
             }
             );
+
+       //modelBuilder.Entity<Veiculo>().HasData();
     }
 
 
