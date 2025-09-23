@@ -12,9 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
 
 
-var app = builder.Build();
-builder.Services.AddDbContext<DbContexto>(
-    options =>
+builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<DbContexto>( options =>
     {
         options.UseMySql(
         builder.Configuration.GetConnectionString("mysql"),
@@ -22,8 +22,8 @@ builder.Services.AddDbContext<DbContexto>(
         );
     });
 
-builder.Services.AddOpenApi();
 
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -58,18 +58,13 @@ app.MapPost("/login", ([FromBody]LoginDTO loginDTO, IAdministradorServico admini
     {
         return Results.Json("Login com Sucesso");
     }
-    //else if (loginDTO.Email == "" && loginDTO.Senha == "")
-    //{
-    //    return Results.BadRequest(new { erro = "Email e senha vázios" });
-    //}
     else { 
         return Results.Unauthorized();
     }
 });
 
+
 app.Run();
-
-
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
