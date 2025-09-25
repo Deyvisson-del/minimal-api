@@ -101,9 +101,7 @@ app.MapDelete("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServ
 {
     var veiculo = veiculoServico.BuscaIdVeiculo(id);
     if (veiculo == null) return Results.NotFound();
-
     veiculoServico.DeletarVeiculo(veiculo);
-
     return Results.NoContent();
 }).WithTags("Veiculos");
 
