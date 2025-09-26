@@ -53,9 +53,27 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
 }).WithTags("Administradores");
 #endregion
 
+
 #region Veiculos
+ErrosDeValidacao validaDTO(VeiculoDTO veiculoDTO)
+{
+    var validacao = new ErrosDeValidacao();
+    if (string.IsNullOrEmpty(veiculoDTO.Nome)) validacao.Mensagens.Add("O nome não pode ser vázio");
+
+    if (string.IsNullOrEmpty(veiculoDTO.Marca)) validacao.Mensagens.Add("A marca do veículo não informada");
+
+    if (string.IsNullOrEmpty(veiculoDTO.Modelo)) validacao.Mensagens.Add("O modelo do veículo não foi informada");
+
+    if (veiculoDTO.Ano <= 1950) validacao.Mensagens.Add("O ano do veículo inválido, Ano tem que ser maior que 1949");
+
+    return validacao;
+}
 app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
+   
+    validacao = validaDTO(veiculoDTO);
+    if (validacao.Mensagens.Count > 0) return Results.BadRequest(validacao);
+    
     var veiculo = new Veiculo
     {
         Nome = veiculoDTO.Nome,
@@ -63,6 +81,7 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veic
         Modelo = veiculoDTO.Modelo,
         Ano = veiculoDTO.Ano,
     };
+    
     veiculoServico.IncluirVeiculo(veiculo);
 
     return Results.Created($"/veiculo{veiculo.Id}", veiculo);
@@ -82,17 +101,21 @@ app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico
     return Results.Ok(veiculo);
 }).WithTags("Veiculos");
 
-app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO,IVeiculoServico veiculoServico) =>
+app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
+    validacao = validaDTO(veiculoDTO);
+    if (validacao.Mensagens.Count > 0) return Results.BadRequest(validacao);
+
     var veiculo = veiculoServico.BuscaIdVeiculo(id);
     if (veiculo == null) return Results.NotFound();
 
-    veiculo.Nome =veiculoDTO.Nome;
+    veiculo.Nome = veiculoDTO.Nome;
     veiculo.Marca = veiculoDTO.Marca;
     veiculo.Modelo = veiculoDTO.Modelo;
     veiculo.Ano = veiculoDTO.Ano;
     veiculoServico.AtualizarVeiculo(veiculo);
     var mensagem = new { mensagem = "Atualização concluída", veiculo };
+
     return Results.Ok(mensagem);
 }).WithTags("Veiculos");
 
