@@ -1,7 +1,8 @@
-using minimal_api.Dominio.Dtos; 
 using minimal_api.Dominio.Entidades;
-using minimal_api.Dominio.Interfaces;
+using minimal_api.Dominio.Dtos;
 using minimal_api.Infraestrutura.Db;
+using minimal_api.Dominio.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace minimal_api.Dominio.Servicos
 {
@@ -18,6 +19,12 @@ namespace minimal_api.Dominio.Servicos
         {
             var adm = _contexto.Administradores.Where(a => a.Email == loginDTO.Email && a.Senha == loginDTO.Senha).FirstOrDefault();    
             return adm;
+        }
+
+        public void IncluirAdministrador(Administrador administrador)
+        {
+            _contexto.Administradores.Add(administrador);
+            _contexto.SaveChanges();
         }
     }
 }
