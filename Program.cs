@@ -53,12 +53,15 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
 }).WithTags("Administradores");
 #endregion
 
-
-#region Veiculos
+#region ErrosValidação
 ErrosDeValidacao validaDTO(VeiculoDTO veiculoDTO)
 {
-    var validacao = new ErrosDeValidacao();
-    if (string.IsNullOrEmpty(veiculoDTO.Nome)) validacao.Mensagens.Add("O nome não pode ser vázio");
+    var validacao = new ErrosDeValidacao
+    {
+        Mensagens = new List<string>()
+    };
+    
+    if (string.IsNullOrEmpty(veiculoDTO.Nome)) validacao.Mensagens.Add("O nome não pode ser vazio");
 
     if (string.IsNullOrEmpty(veiculoDTO.Marca)) validacao.Mensagens.Add("A marca do veículo não informada");
 
@@ -68,10 +71,14 @@ ErrosDeValidacao validaDTO(VeiculoDTO veiculoDTO)
 
     return validacao;
 }
+#endregion
+
+#region Veiculos
+
+
 app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
-   
-    validacao = validaDTO(veiculoDTO);
+    var validacao = validaDTO(veiculoDTO);
     if (validacao.Mensagens.Count > 0) return Results.BadRequest(validacao);
     
     var veiculo = new Veiculo
@@ -95,7 +102,7 @@ app.MapGet("/veiculos", ([FromQuery] int? pagina, IVeiculoServico veiculoServico
 }).WithTags("Veiculos");
 
 app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico) =>
-{
+{    
     var veiculo = veiculoServico.BuscaIdVeiculo(id);
     if (veiculo == null) return Results.NotFound();
     return Results.Ok(veiculo);
@@ -103,8 +110,6 @@ app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoServico veiculoServico
 
 app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO, IVeiculoServico veiculoServico) =>
 {
-    validacao = validaDTO(veiculoDTO);
-    if (validacao.Mensagens.Count > 0) return Results.BadRequest(validacao);
 
     var veiculo = veiculoServico.BuscaIdVeiculo(id);
     if (veiculo == null) return Results.NotFound();
@@ -113,6 +118,10 @@ app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO, IVeicul
     veiculo.Marca = veiculoDTO.Marca;
     veiculo.Modelo = veiculoDTO.Modelo;
     veiculo.Ano = veiculoDTO.Ano;
+
+    var validacao = validaDTO(veiculoDTO);
+    if (validacao.Mensagens.Count > 0) return Results.BadRequest(validacao);
+
     veiculoServico.AtualizarVeiculo(veiculo);
     var mensagem = new { mensagem = "Atualização concluída", veiculo };
 
