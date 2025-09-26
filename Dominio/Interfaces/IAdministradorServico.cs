@@ -7,5 +7,6 @@ namespace minimal_api.Dominio.Interfaces
     {
         Administrador? Login(LoginDTO loginDTO);
         void IncluirAdministrador(Administrador administrador);
+        List<Administrador> TodosAdministradores(int? pagina, string? email);
     }
 }

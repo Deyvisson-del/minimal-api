@@ -17,7 +17,7 @@ namespace minimal_api.Dominio.Servicos
 
         public Administrador? Login(LoginDTO loginDTO)
         {
-            var adm = _contexto.Administradores.Where(a => a.Email == loginDTO.Email && a.Senha == loginDTO.Senha).FirstOrDefault();    
+            var adm = _contexto.Administradores.Where(a => a.Email == loginDTO.Email && a.Senha == loginDTO.Senha).FirstOrDefault();
             return adm;
         }
 
@@ -25,6 +25,21 @@ namespace minimal_api.Dominio.Servicos
         {
             _contexto.Administradores.Add(administrador);
             _contexto.SaveChanges();
+        }
+
+        public List<Administrador> TodosAdministradores(int? pagina = 1, string? email = null)
+        {
+            var query = _contexto.Administradores.AsQueryable();
+
+            if (!string.IsNullOrEmpty(email)) query = query.Where(adm => EF.Functions.Like(adm.Email.ToLower(), $"%{email}"));
+            int itensPagina = 10;
+            
+            if (pagina != null)
+            {
+                query = query.Skip(((int)pagina - 1) * itensPagina).Take(itensPagina);
+            }
+
+            return query.ToList();
         }
     }
 }

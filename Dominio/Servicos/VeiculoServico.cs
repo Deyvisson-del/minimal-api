@@ -34,14 +34,14 @@ namespace minimal_api.Dominio.Servicos
             _contexto.SaveChanges();
         }
 
-
         public void DeletarVeiculo(Veiculo veiculo)
         {
             _contexto.Veiculos.Remove(veiculo);
             _contexto.SaveChanges();
         }
 
-        public List<Veiculo> Todos(int? pagina = 1, string? nome = null, string? marca = null)
+
+        public List<Veiculo> TodosVeiculos(int? pagina = 1, string? nome = null, string? marca = null)
         {
             var query = _contexto.Veiculos.AsQueryable();
 

@@ -6,6 +6,7 @@ using minimal_api.Dominio.Interfaces;
 using minimal_api.Dominio.Servicos;
 using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.ModelViews;
+using minimal_api.Dominio.Enuns;
 using Microsoft.AspNetCore.Mvc;
 
 #region Builder
@@ -41,7 +42,6 @@ app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
 
 #region Administradores 
 
-
 app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministradorServico administradorServico) =>
 {
     if (administradorServico.Login(loginDTO) != null)
@@ -56,6 +56,7 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
 
 app.MapPost("/administradores/CadastroAdministrador", ([FromBody] AdministradorDTO administradorDTO, IAdministradorServico administradorServico) =>
     {
+
         var validacao = validaAdministradorDTO(administradorDTO);
         if (validacao.Mensagens.Count > 0) return Results.BadRequest(validacao);
 
@@ -63,7 +64,7 @@ app.MapPost("/administradores/CadastroAdministrador", ([FromBody] AdministradorD
         {
             Email = administradorDTO.Email,
             Senha = administradorDTO.Senha,
-            Perfil = administradorDTO.Perfil,
+            Perfil = administradorDTO.Perfil.ToString()
         };
 
         administradorServico.IncluirAdministrador(administrador);
@@ -72,6 +73,11 @@ app.MapPost("/administradores/CadastroAdministrador", ([FromBody] AdministradorD
 
     }).WithTags("Administradores");
 
+app.MapGet("/administradores/ListaAdministradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) =>
+    {
+        var administradores = administradorServico.TodosAdministradores(pagina, null);
+        return Results.Ok(administradores);
+    }).WithTags("Administradores");
 
 #endregion
 
@@ -89,7 +95,7 @@ ErrosDeValidacao validaVeiculoDTO(VeiculoDTO veiculoDTO)
 
     if (string.IsNullOrEmpty(veiculoDTO.Modelo)) validacao.Mensagens.Add("O modelo do veículo não foi informada");
 
-    if (veiculoDTO.Ano <= 1950) validacao.Mensagens.Add("O ano do veículo inválido, Ano tem que ser maior que 1949");
+    if (veiculoDTO.Ano <= 1949) validacao.Mensagens.Add("O ano do veículo inválido, Ano tem que ser maior que 1949");
 
     return validacao;
 }
@@ -105,7 +111,7 @@ ErrosDeValidacao validaAdministradorDTO(AdministradorDTO AdministradorDTO)
 
     if (string.IsNullOrEmpty(AdministradorDTO.Senha)) validacao.Mensagens.Add("A senha não pode ser vazia");
 
-    if (AdministradorDTO.Perfil != "Adm") validacao.Mensagens.Add("O perfil deve ser: Adm");
+    if (AdministradorDTO.Perfil != (Perfil)1) validacao.Mensagens.Add("O perfil deve ser: Adm");
 
     return validacao;
 }
@@ -133,7 +139,7 @@ app.MapPost("/veiculos/CadastrarVeiculo", ([FromBody] VeiculoDTO veiculoDTO, IVe
 
 app.MapGet("/veiculos/ConsultaPagina", ([FromQuery] int? pagina, IVeiculoServico veiculoServico) =>
 {
-    var veiculos = veiculoServico.Todos(pagina);
+    var veiculos = veiculoServico.TodosVeiculos(pagina);
 
     return Results.Ok(veiculos);
 }).WithTags("Veiculos");
