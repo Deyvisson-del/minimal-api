@@ -9,6 +9,7 @@ using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.ModelViews;
 using minimal_api.Dominio.Enuns;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 #endregion
 
 #region Builder
@@ -71,14 +72,28 @@ app.MapPost("/administradores/CadastroAdministrador", ([FromBody] AdministradorD
 
         administradorServico.IncluirAdministrador(administrador);
 
-        return Results.Created($"/administrador{administrador.Id}", administrador);
+        return Results.Created($"/administrador{administrador.Id}", new AdministradorModelViews
+        {
+            Id = administrador.Id,
+            Email = administrador.Email,
+            Perfil = administrador.Perfil
+        });
 
     }).WithTags("Administradores");
 
 app.MapGet("/administradores/ListaAdministradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) =>
     {
+        var adms = new List<AdministradorModelViews>();
         var administradores = administradorServico.TodosAdministradores(pagina, null);
-        return Results.Ok(administradores);
+        foreach (var adm in administradores)
+        {
+            adms.Add(new AdministradorModelViews{
+                Id = adm.Id,
+                Email = adm.Email,
+                Perfil = adm.Perfil
+            });
+        }
+        return Results.Ok(adms);
 
     }).WithTags("Administradores");
 
@@ -86,7 +101,13 @@ app.MapGet("/administradores/ConsultaPorID{id}", ([FromRoute] int id, IAdministr
 {
     var administrador = administradorServico.BuscarIdAdministrador(id);
     if (administrador == null) return Results.NotFound();
-    return Results.Ok(administrador);
+    return Results.Ok(new AdministradorModelViews
+    {
+        Id = administrador.Id,
+        Email = administrador.Email,
+        Perfil = administrador.Perfil
+    });
+
 }).WithTags("Administradores");
 
 #endregion
@@ -120,8 +141,6 @@ ErrosDeValidacao validaAdministradorDTO(AdministradorDTO AdministradorDTO)
     if (string.IsNullOrEmpty(AdministradorDTO.Email)) validacao.Mensagens.Add("O Email não pode ser vazio");
 
     if (string.IsNullOrEmpty(AdministradorDTO.Senha)) validacao.Mensagens.Add("A senha não pode ser vazia");
-
-    if (AdministradorDTO.Perfil != Perfil.Adm) validacao.Mensagens.Add("O perfil deve ser: Adm");
 
     if (AdministradorDTO.Perfil == null) validacao.Mensagens.Add("O perfil deve ser vázio");
 
