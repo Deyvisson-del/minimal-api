@@ -1,3 +1,4 @@
+#region Using
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using minimal_api.Infraestrutura.Db;
@@ -8,6 +9,7 @@ using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.ModelViews;
 using minimal_api.Dominio.Enuns;
 using Microsoft.AspNetCore.Mvc;
+#endregion
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
