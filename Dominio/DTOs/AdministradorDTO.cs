@@ -8,6 +8,6 @@ namespace minimal_api.Dominio.Dtos;
 
     public string Senha { get; set; } = string.Empty;
 
-    public Perfil Perfil { get; set; }
+    public Perfil? Perfil { get; set; }
 
 }

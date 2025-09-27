@@ -10,6 +10,11 @@ namespace minimal_api.Dominio.Servicos
     {
         private readonly DbContexto _contexto;
 
+        public Administrador? BuscarIdAdministrador(int id)
+        {
+            return _contexto.Administradores.Where(adm => adm.Id == id).FirstOrDefault();
+        }
+
         public AdministradorServico(DbContexto contexto)
         {
             _contexto = contexto;

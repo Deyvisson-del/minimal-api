@@ -1,4 +1,4 @@
-#region Using
+#region Usings
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using minimal_api.Infraestrutura.Db;
@@ -66,7 +66,7 @@ app.MapPost("/administradores/CadastroAdministrador", ([FromBody] AdministradorD
         {
             Email = administradorDTO.Email,
             Senha = administradorDTO.Senha,
-            Perfil = administradorDTO.Perfil.ToString()
+            Perfil = administradorDTO.Perfil.ToString() ?? Perfil.Editor.ToString()
         };
 
         administradorServico.IncluirAdministrador(administrador);
@@ -79,7 +79,15 @@ app.MapGet("/administradores/ListaAdministradores", ([FromQuery] int? pagina, IA
     {
         var administradores = administradorServico.TodosAdministradores(pagina, null);
         return Results.Ok(administradores);
+
     }).WithTags("Administradores");
+
+app.MapGet("/administradores/ConsultaPorID{id}", ([FromRoute] int id, IAdministradorServico administradorServico) =>
+{
+    var administrador = administradorServico.BuscarIdAdministrador(id);
+    if (administrador == null) return Results.NotFound();
+    return Results.Ok(administrador);
+}).WithTags("Administradores");
 
 #endregion
 
@@ -113,7 +121,9 @@ ErrosDeValidacao validaAdministradorDTO(AdministradorDTO AdministradorDTO)
 
     if (string.IsNullOrEmpty(AdministradorDTO.Senha)) validacao.Mensagens.Add("A senha não pode ser vazia");
 
-    if (AdministradorDTO.Perfil != (Perfil)1) validacao.Mensagens.Add("O perfil deve ser: Adm");
+    if (AdministradorDTO.Perfil != Perfil.Adm) validacao.Mensagens.Add("O perfil deve ser: Adm");
+
+    if (AdministradorDTO.Perfil == null) validacao.Mensagens.Add("O perfil deve ser vázio");
 
     return validacao;
 }
