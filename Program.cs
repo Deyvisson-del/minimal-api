@@ -9,11 +9,31 @@ using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.ModelViews;
 using minimal_api.Dominio.Enuns;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 #endregion
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
+
+var key = builder.Configuration.GetSection("Jwt")["key"].ToString();
+
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+}).AddJwtBearer(option => {
+        option.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateLifeTime = true,
+            ValidateAudience = JwtSettigns.Audience,
+
+        };
+
+});
+
 
 builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
 builder.Services.AddScoped<IVeiculoServico, VeiculoServico>();
@@ -23,18 +43,14 @@ builder.Services.AddSwaggerGen();
 
 //builder.Services.AddOpenApi(); dotnet 9
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 
 builder.Services.AddDbContext<DbContexto>(options =>
     {
         options.UseMySql(
-        builder.Configuration.GetConnectionString("mysql"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("mysql"))
+        builder.Configuration.GetConnectionString("MySql"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MySql"))
         );
     });
-
 
 var app = builder.Build();
 #endregion
