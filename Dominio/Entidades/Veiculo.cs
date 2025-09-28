@@ -1,5 +1,7 @@
+#region Usings
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+#endregion
 
 namespace minimal_api.Dominio.Entidades
 {

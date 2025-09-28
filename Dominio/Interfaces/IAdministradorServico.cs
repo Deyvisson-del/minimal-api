@@ -1,5 +1,7 @@
+#region Usings
 using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.Dtos;
+#endregion
 
 namespace minimal_api.Dominio.Interfaces
 {

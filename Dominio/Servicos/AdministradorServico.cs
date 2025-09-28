@@ -1,8 +1,10 @@
+# region Usings
 using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.Dtos;
 using minimal_api.Infraestrutura.Db;
 using minimal_api.Dominio.Interfaces;
 using Microsoft.EntityFrameworkCore;
+#endregion
 
 namespace minimal_api.Dominio.Servicos
 {
@@ -43,7 +45,6 @@ namespace minimal_api.Dominio.Servicos
             {
                 query = query.Skip(((int)pagina - 1) * itensPagina).Take(itensPagina);
             }
-
             return query.ToList();
         }
     }

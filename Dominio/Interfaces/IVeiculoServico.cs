@@ -1,11 +1,12 @@
+#region Usings
 using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.Dtos;
+#endregion
 
 namespace minimal_api.Dominio.Interfaces
 {
     public interface IVeiculoServico
     {
-
         List<Veiculo> TodosVeiculos(int? pagina = 1, string? nome = null, string? marca = null);
 
         Veiculo? BuscaIdVeiculo(int id);

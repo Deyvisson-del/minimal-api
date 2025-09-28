@@ -1,13 +1,13 @@
+#region Usings
 using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.Dtos;
 using minimal_api.Infraestrutura.Db;
 using minimal_api.Dominio.Interfaces;
 using Microsoft.EntityFrameworkCore;
+#endregion
 
 namespace minimal_api.Dominio.Servicos
 {
-
-
     public class VeiculoServico : IVeiculoServico
     {
         private readonly DbContexto _contexto;
@@ -40,7 +40,6 @@ namespace minimal_api.Dominio.Servicos
             _contexto.SaveChanges();
         }
 
-
         public List<Veiculo> TodosVeiculos(int? pagina = 1, string? nome = null, string? marca = null)
         {
             var query = _contexto.Veiculos.AsQueryable();
@@ -49,11 +48,10 @@ namespace minimal_api.Dominio.Servicos
             {
                 query = query.Where(v => EF.Functions.Like(v.Nome.ToLower(), $"%{nome}%"));
             }
-            int itensPorPagina = 10;
+                int itensPorPagina = 10;
             if(pagina != null)
             {
-
-            query = query.Skip(((int)pagina - 1) * itensPorPagina).Take(itensPorPagina);
+                query = query.Skip(((int)pagina - 1) * itensPorPagina).Take(itensPorPagina);
             }
 
             return query.ToList();
