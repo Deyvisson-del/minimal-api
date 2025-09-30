@@ -1,6 +1,10 @@
 #region Usings
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using minimal_api.Infraestrutura.Db;
 using minimal_api.Dominio.Dtos;
 using minimal_api.Dominio.Interfaces;
@@ -8,9 +12,6 @@ using minimal_api.Dominio.Servicos;
 using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.ModelViews;
 using minimal_api.Dominio.Enuns;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
@@ -39,6 +40,8 @@ builder.Services.AddAuthentication(option =>
         ValidateAudience = false
     };
 });
+
+
 builder.Services.AddAuthorization();
 
 
@@ -46,7 +49,35 @@ builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
 builder.Services.AddScoped<IVeiculoServico, VeiculoServico>();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Insira o token JWT"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+            }, 
+            new string[]{ }
+         }
+
+    });
+});
+
 
 //builder.Services.AddOpenApi(); dotnet 9
 
@@ -62,7 +93,7 @@ var app = builder.Build();
 #endregion
 
 #region Home
-app.MapGet("/", () => Results.Json(new Home())).WithTags("Home");
+app.MapGet("/", () => Results.Json(new Home())).AllowAnonymous().WithTags("Home");
 #endregion
 
 #region Administradores 
@@ -96,7 +127,7 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
     {
         string token = GerarTokenJwt(adm);
 
-        return Results.Ok(new AdministradorLogado 
+        return Results.Ok(new AdministradorLogado
         {
             Email = adm.Email,
             Perfil = adm.Perfil,
@@ -107,7 +138,7 @@ app.MapPost("/administradores/login", ([FromBody] LoginDTO loginDTO, IAdministra
     {
         return Results.Unauthorized();
     }
-}).WithTags("Administradores");
+}).AllowAnonymous().WithTags("Administradores");
 
 app.MapPost("/administradores/CadastroAdministrador", ([FromBody] AdministradorDTO administradorDTO, IAdministradorServico administradorServico) =>
 {
