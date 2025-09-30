@@ -12,12 +12,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 #endregion
 
 #region Builder
 var builder = WebApplication.CreateBuilder(args);
 
-var key = builder.Configuration.GetSection("Jwt")["key"].ToString();
+var key = builder.Configuration.GetSection("Jwt").ToString();
+if (string.IsNullOrEmpty(key)) key = "123456";
 
 builder.Services.AddAuthentication(option =>
 {
@@ -27,13 +29,16 @@ builder.Services.AddAuthentication(option =>
 }).AddJwtBearer(option => {
         option.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateLifeTime = true,
-            ValidateAudience = JwtSettigns.Audience,
-
+            ValidateLifetime = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+            ValidateIssuerSigningKey = true, 
+            ValidateIssuer = false,
+            ValidateAudience = false
         };
 
 });
 
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAdministradorServico, AdministradorServico>();
 builder.Services.AddScoped<IVeiculoServico, VeiculoServico>();
@@ -95,7 +100,7 @@ app.MapPost("/administradores/CadastroAdministrador", ([FromBody] AdministradorD
             Perfil = administrador.Perfil
         });
 
-    }).WithTags("Administradores");
+    }).RequireAuthorization().WithTags("Administradores");
 
 app.MapGet("/administradores/ListaAdministradores", ([FromQuery] int? pagina, IAdministradorServico administradorServico) =>
     {
@@ -239,5 +244,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseAuthentication();  
+app.UseAuthorization();
 app.Run();
+
 #endregion
