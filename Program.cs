@@ -307,7 +307,7 @@ app.MapPut("/veiculos/AtualizacaoVeiculo{id}", ([FromRoute] int id, VeiculoDTO v
     return Results.Ok(mensagem);
 })
     .RequireAuthorization()
-    .RequireAuthorization(new AuthorizeAttribute { Roles = "Adm" })
+    .RequireAuthorization(new AuthorizeAttribute { Roles = "Adm,Editor" })
     .WithTags("Veiculos");
 
 app.MapDelete("/veiculos/DeletarVeiculo{id}", ([FromRoute] int id, IVeiculoServico veiculoServico) =>
