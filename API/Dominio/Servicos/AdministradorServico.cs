@@ -1,8 +1,8 @@
 # region Usings
 using minimal_api.Dominio.Entidades;
 using minimal_api.Dominio.Dtos;
-using minimal_api.Infraestrutura.Db;
 using minimal_api.Dominio.Interfaces;
+using minimal_api.Infraestrutura.Db;
 using Microsoft.EntityFrameworkCore;
 #endregion
 
