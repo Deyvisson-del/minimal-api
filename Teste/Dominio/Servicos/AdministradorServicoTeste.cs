@@ -7,6 +7,7 @@ using minimal_api.Infraestrutura.Db;
 using minimal_api.Dominio.Servicos;
 using Microsoft.OpenApi.Models;
 using Test.Domain.Entidades;
+using System.Reflection;
 using System.IO;
 
 namespace Test.Domain.Servicos;
@@ -16,9 +17,11 @@ public class AdministradorServicoTeste
 {
     private DbContexto CriarContextoDeTeste()
     {
-        var basePath = AppContext.BaseDirectory;
+        var assemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        var path = Path.GetFullPath(Path.Combine(assemblyPath ?? "", "..", "..",".."));
+
         var builder = new ConfigurationBuilder()
-            .SetBasePath(basePath)
+            .SetBasePath(path ?? Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddEnvironmentVariables();
 
@@ -47,4 +50,24 @@ public class AdministradorServicoTeste
         //Assert
         Assert.AreEqual(1, administradorServico.TodosAdministradores(1).Count());
     }
+
+    [TestMethod]
+    public void TestarBuscaPorIdAdministrador()
+    {
+        // Arrange 
+        var context = CriarContextoDeTeste();
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
+
+        var adm = new Administrador();
+        adm.Id = 1;
+        context = CriarContextoDeTeste();
+        var administradorServico = new AdministradorServico(context);
+
+        //Act
+        var admDoBanco =  administradorServico.BuscarIdAdministrador(adm.Id);
+
+        //Assert
+        Assert.AreEqual(1, admDoBanco.Id);
+    }
+
 }
