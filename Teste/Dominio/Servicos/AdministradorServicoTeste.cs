@@ -1,57 +1,50 @@
-#region Usings
-using minimal_api.Dominio.Entidades;
-using minimal_api.Dominio.Dtos;
-using minimal_api.Dominio.Servico;
-using minimal_api.Infraestrutura.Db;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration;
-#endregion
+using Microsoft.EntityFrameworkCore;
+using minimal_api.Dominio.Entidades;
+using minimal_api.Infraestrutura.Db;
+using minimal_api.Dominio.Servicos;
+using Microsoft.OpenApi.Models;
+using Test.Domain.Entidades;
+using System.IO;
 
-namespace Teste.Dominio.Servico;
-
+namespace Test.Domain.Servicos;
 
 [TestClass]
 public class AdministradorServicoTeste
 {
-    private DbContexto CriarContextoTeste()
+    private DbContexto CriarContextoDeTeste()
     {
+        var basePath = AppContext.BaseDirectory;
         var builder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloandOnChange: true)
+            .SetBasePath(basePath)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddEnvironmentVariables();
 
-        var configuration = builder.build();
+        var configuration = builder.Build();
 
-
-
-        var options = new DbContextOptionsBuilder<DbContexto>()
-           .UseInMemoryDatabase("TestDatabase")
-           .Options;
-        return new DbContexto(options);
+        return new DbContexto(configuration);
     }
 
-
-
     [TestMethod]
-    public void TesteCadastroAdministrador()
+    public void TestarCadastroAdministrador()
     {
-        //Arrange
+        // Arrange 
+        var context = CriarContextoDeTeste();
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
+
         var adm = new Administrador();
-        adm.Id = 1;
         adm.Email = "administrador@teste.com";
         adm.Senha = "123456";
         adm.Perfil = "Adm";
+        context = CriarContextoDeTeste();
+        var administradorServico = new AdministradorServico(context);
 
         //Act
-        var context = new CriarContextoTeste();
-
+        administradorServico.IncluirAdministrador(adm);
 
         //Assert
-        Assert.AreEqual(1, adm.Id);
-        Assert.AreEqual("administrador@teste.com", adm.Email);
-        Assert.AreEqual("123456", adm.Senha);
-        Assert.AreEqual("Adm", adm.Perfil);
-
+        Assert.AreEqual(1, administradorServico.TodosAdministradores(1).Count());
     }
-
 }

@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace minimal_api.Dominio.Entidades
 {
-
     public class Administrador
     {
         [Key]

@@ -1,27 +1,29 @@
+
 using minimal_api.Dominio.Entidades;
-namespace Teste.Dominio.Entidades;
+
+namespace Test.Domain.Entidades;
 
 [TestClass]
-public class VeiculosTeste
+public class VeiculoTeste
 {
     [TestMethod]
     public void TestarGetSetPropriedades()
     {
         //Arrange
-        var veiculo = new Veiculo();
+        var veiculosTeste = new Veiculo();
 
         //Act
-        veiculo.Id = 1;
-        veiculo.Nome = "Lettie Crispin";
-        veiculo.Marca = "Lincoln";
-        veiculo.Modelo = "Mark VIII";
-        veiculo.Ano = 1995;
+        veiculosTeste.Id = 104;
+        veiculosTeste.Nome = "Luiz Guilherme";
+        veiculosTeste.Marca = "Nissan";
+        veiculosTeste.Modelo = "GTR 35";
+        veiculosTeste.Ano = 2011;
 
         //Assert
-        Assert.AreEqual(1, veiculo.Id);
-        Assert.AreEqual("Lettie Crispin", veiculo.Nome);
-        Assert.AreEqual("Lincoln", veiculo.Marca);
-        Assert.AreEqual("Mark VIII", veiculo.Modelo);
-        Assert.AreEqual(1995, veiculo.Ano);
+        Assert.AreEqual(104, veiculosTeste.Id);
+        Assert.AreEqual("Luiz Guilherme", veiculosTeste.Nome);
+        Assert.AreEqual("Nissan", veiculosTeste.Marca);
+        Assert.AreEqual("GTR 35", veiculosTeste.Modelo);
+        Assert.AreEqual(2011, veiculosTeste.Ano);
     }
 }
